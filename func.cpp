@@ -49,3 +49,19 @@ BigInt::BigInt(string hexstring){
     }
     data = result.data;
 }
+
+BigInt BigInt::operator+(const BigInt &other) const {
+    BigInt result;
+    size_t siz = max(data.size(), other.data.size());
+    result.data.resize(siz);
+    uint64_t carry=0;
+    for(size_t i=0; i<siz; i++){
+        uint64_t sum = carry;
+        if(i<data.size()) sum = sum + data[i];
+        if(i<other.data.size()) sum = sum + other.data[i];
+        result.data[i] = sum & BASE;
+        carry = sum >> base;
+    }
+    if(carry) result.data.push_back(carry);
+    return result;
+}
