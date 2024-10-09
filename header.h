@@ -20,6 +20,7 @@ class BigInt{
     BigInt();
     BigInt(string hexstring);
     BigInt operator+(const BigInt &other) const;
+    BigInt operator-(const BigInt &other) const;
     int size();
     friend ostream& operator<< (ostream &out, BigInt &num);
 };

@@ -65,3 +65,30 @@ BigInt BigInt::operator+(const BigInt &other) const {
     if(carry) result.data.push_back(carry);
     return result;
 }
+
+BigInt BigInt::operator-(const BigInt &other) const{
+    BigInt result;
+    size_t siz = max(data.size(), other.data.size());
+    result.data.resize(siz);        
+    int64_t borrow = 0;
+    for(size_t i = 0; i<siz; i++){
+        int64_t diff = - borrow;
+        if(i<data.size()) diff = diff + data[i];    
+        if(i<other.data.size()) diff = diff - other.data[i];
+        if(diff<0){
+            diff = diff + BASE + 1;
+            borrow = 1;
+        }
+        else{
+            borrow = 0;
+        }
+        result.data[i] = diff;
+    }
+    if(borrow){
+        result.data[0] = BASE - result.data[0] + 1;
+        for(size_t i=1; i<result.data.size(); i++){
+         result.data[i] = BASE - result.data[i]; 
+        }
+    }
+    return result;
+}
