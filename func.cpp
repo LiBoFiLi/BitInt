@@ -92,3 +92,56 @@ BigInt BigInt::operator-(const BigInt &other) const{
     }
     return result;
 }
+
+BigInt BigInt::MulOneDigit(string nums){
+    BigInt result;
+    uint32_t num = fromstring(nums);
+    result.data.resize(data.size());
+    uint64_t carry = 0;
+    for(size_t i = 0; i<data.size(); i++){
+        uint64_t mul = data[i];
+        mul = mul*num + carry; 
+        result.data[i] = mul & BASE;
+        carry = mul >> base;
+    }
+    if(carry) result.data.push_back(carry);
+    return result;
+}
+
+BigInt BigInt::MulOneDigit(uint32_t num){
+    BigInt result;
+    result.data.resize(data.size());
+    uint64_t carry = 0;
+    for(size_t i = 0; i<data.size(); i++){
+        uint64_t mul = data[i];
+        mul = mul*num + carry; 
+        result.data[i] = mul & BASE;
+        carry = mul >> base;
+    }
+    if(carry) result.data.push_back(carry);
+    return result;
+}
+
+BigInt BigInt::LongShiftDigitsToHigh(int value){
+    BigInt result;
+    result.data = data;
+    for(int j = 0; j<value; j++){
+        result.data.insert(result.data.begin(), 0);
+    }
+    return result;
+}
+
+BigInt BigInt::operator*(const BigInt &other) const{
+    BigInt result, copy;
+    copy.data = data;
+    for(size_t i=0; i<other.data.size(); i++){
+        //uint32_t value = other.data[i];
+        BigInt mul = copy.MulOneDigit(other.data[i]);
+        //cout<< mul<<" "<<mul.size()<< endl;
+        mul = mul.LongShiftDigitsToHigh(i);
+        result = result + mul;
+        //cout<< mul<<" "<<mul.size()<< endl;
+        //cout<< endl;
+    }
+    return result;
+}

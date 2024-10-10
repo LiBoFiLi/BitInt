@@ -21,6 +21,10 @@ class BigInt{
     BigInt(string hexstring);
     BigInt operator+(const BigInt &other) const;
     BigInt operator-(const BigInt &other) const;
+    BigInt MulOneDigit(string nums);
+    BigInt MulOneDigit(uint32_t num);
+    BigInt LongShiftDigitsToHigh(int i);
+    BigInt operator*(const BigInt &other) const;
     int size();
     friend ostream& operator<< (ostream &out, BigInt &num);
 };
