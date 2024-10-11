@@ -89,7 +89,9 @@ BigInt BigInt::operator-(const BigInt &other) const{
         for(size_t i=1; i<result.data.size(); i++){
          result.data[i] = BASE - result.data[i]; 
         }
+        //cout<<"ALARMYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYDDDDDDDDDDDD!!"<<endl;
     }
+    result.trim();
     return result;
 }
 
@@ -144,4 +146,167 @@ BigInt BigInt::operator*(const BigInt &other) const{
         //cout<< endl;
     }
     return result;
+}
+
+bool BigInt::operator>(const BigInt &other) const {
+    int a = data.size();
+    while (a > 0 && data[a - 1] == 0) {
+        a--;
+    }
+    int b = other.data.size();
+    while (b > 0 && other.data[b - 1] == 0) {
+        b--;
+    }
+    if (a > b) return true;   
+    if (a < b) return false; 
+    for (int i = a - 1; i >= 0; i--) {
+        if (data[i] > other.data[i]) return true;   
+        if (data[i] < other.data[i]) return false;  
+    }
+    return false; 
+}
+
+bool BigInt::operator>=(const BigInt &other) const {
+    int a = data.size();
+    while (a > 0 && data[a - 1] == 0) {
+        a--;
+    }
+    int b = other.data.size();
+    while (b > 0 && other.data[b - 1] == 0) {
+        b--;
+    }
+    if (a > b) return true;   
+    if (a < b) return false; 
+    for (int i = a - 1; i >= 0; i--) {
+        if (data[i] > other.data[i]) return true;   
+        if (data[i] < other.data[i]) return false;  
+    }
+    return true; 
+}
+
+bool BigInt::operator<(const BigInt &other) const {
+    int a = data.size();
+    while (a > 0 && data[a - 1] == 0) {
+        a--;
+    }
+    int b = other.data.size();
+    while (b > 0 && other.data[b - 1] == 0) {
+        b--;
+    }
+    if (a < b) return true;   
+    if (a > b) return false; 
+    for (int i = a - 1; i >= 0; i--) {
+        if (data[i] < other.data[i]) return true;   
+        if (data[i] > other.data[i]) return false;  
+    }
+    return false; 
+}
+
+bool BigInt::operator<=(const BigInt &other) const {
+    int a = data.size();
+    while (a > 0 && data[a - 1] == 0) {
+        a--;
+    }
+    int b = other.data.size();
+    while (b > 0 && other.data[b - 1] == 0) {
+        b--;
+    }
+    if (a < b) return true;   
+    if (a > b) return false; 
+    for (int i = a - 1; i >= 0; i--) {
+        if (data[i] < other.data[i]) return true;   
+        if (data[i] > other.data[i]) return false;  
+    }
+    return true; 
+}
+
+void BigInt::printBinary() const{
+    for(size_t i = data.size(); i>0; i--){
+        bitset<32> binary(data[i-1]);
+        cout << binary<<" ";
+    }
+}
+
+BigInt BigInt::LongShiftBitsToHigh(int value){
+    if (value <= 0) return *this; 
+
+    BigInt result;
+    result.data.resize(data.size() + (value / 32) + 1, 0); 
+    uint32_t carry = 0; 
+
+    for (size_t i = 0; i < data.size(); i++) {
+        uint32_t current = data[i]; 
+        result.data[i + (value / 32)] |= (current << (value % 32)); 
+
+        if (value % 32 > 0 && i + (value / 32) + 1 < result.data.size()) {
+            result.data[i + (value / 32) + 1] |= (current >> (32 - (value % 32))); 
+        }
+    }
+
+    while (result.data.size() > 1 && result.data.back() == 0) {
+        result.data.pop_back();
+    }
+
+    return result;
+}
+
+BigInt BigInt::operator/(const BigInt &other) const{
+    if(other.isZero()) throw invalid_argument("Division by zero");
+    BigInt Q("0"); 
+    BigInt R,B;
+    int j = 0,  q = 0;
+    B.data = other.data;
+    R.data = data; 
+    if (R < B) {
+        return BigInt(0);
+    }
+    size_t k = B.bitLength();
+    while(R>=B){ 
+        j = j + 1;
+        size_t t = R.bitLength();
+        BigInt C = B.LongShiftBitsToHigh(t-k);
+        if(C>R){
+            q = q + 1;
+            t=t-1;
+            C = B.LongShiftBitsToHigh(t-k);
+        }
+        //cout<<"Q:"<< Q <<" R:"<<R<<" B:"<<B<<" C: "<<C<<" t:"<<t<<" k:"<<k<<" "<<bool(R>C)<<endl;
+        R = R - C;
+        BigInt Qc("1");
+        Qc = Qc.LongShiftBitsToHigh(t-k);
+        Q = Q + Qc;
+       // cout<<Qc<<endl;
+        //cout<<"Q:"<< Q <<" R:"<<R<<" B:"<<B<<" C: "<<C<<" t:"<<t<<" k:"<<k<<endl;
+        //cout<<"RAfter: "<<R<<endl;
+    }
+    return Q;
+}
+
+BigInt BigInt::operator%(const BigInt &other) const{
+    if(other.isZero()) throw invalid_argument("Division by zero");
+    BigInt Q("0"); 
+    BigInt R,B;
+    B.data = other.data;
+    R.data = data; 
+    if (R < B) {
+        return BigInt(0);
+    }
+    size_t k = B.bitLength();
+    while(R>=B){ 
+        size_t t = R.bitLength();
+        BigInt C = B.LongShiftBitsToHigh(t-k);
+        if(C>R){
+            t=t-1;
+            C = B.LongShiftBitsToHigh(t-k);
+        }
+       // cout<<"Q:"<< Q <<" R:"<<R<<" B:"<<B<<" C: "<<C<<" t:"<<t<<" k:"<<k<<" "<<bool(R>C)<<endl;
+        R = R - C;
+        BigInt Qc("1");
+        Qc = Qc.LongShiftBitsToHigh(t-k);
+        Q = Q + Qc;
+       // cout<<Qc<<endl;
+        //cout<<"Q:"<< Q <<" R:"<<R<<" B:"<<B<<" C: "<<C<<" t:"<<t<<" k:"<<k<<endl;
+        //cout<<"RAfter: "<<R<<endl;
+    }
+    return R;
 }
