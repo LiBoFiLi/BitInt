@@ -38,7 +38,7 @@ class BigInt{
     BigInt operator*(const BigInt &other) const;
     BigInt operator/(const BigInt &other) const;
     BigInt operator%(const BigInt &other) const;
-    BigInt mod(const BigInt &other) const;
+    BigInt pow(const BigInt &other) const;
     bool operator>(const BigInt &other) const;
     bool operator>=(const BigInt &other) const;
     bool operator<(const BigInt &other) const;

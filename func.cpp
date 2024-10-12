@@ -254,7 +254,6 @@ BigInt BigInt::operator/(const BigInt &other) const{
     if(other.isZero()) throw invalid_argument("Division by zero");
     BigInt Q("0"); 
     BigInt R,B;
-    int j = 0,  q = 0;
     B.data = other.data;
     R.data = data; 
     if (R < B) {
@@ -262,11 +261,9 @@ BigInt BigInt::operator/(const BigInt &other) const{
     }
     size_t k = B.bitLength();
     while(R>=B){ 
-        j = j + 1;
         size_t t = R.bitLength();
         BigInt C = B.LongShiftBitsToHigh(t-k);
         if(C>R){
-            q = q + 1;
             t=t-1;
             C = B.LongShiftBitsToHigh(t-k);
         }
@@ -289,7 +286,7 @@ BigInt BigInt::operator%(const BigInt &other) const{
     B.data = other.data;
     R.data = data; 
     if (R < B) {
-        return BigInt(0);
+        return BigInt(R);
     }
     size_t k = B.bitLength();
     while(R>=B){ 
@@ -309,4 +306,18 @@ BigInt BigInt::operator%(const BigInt &other) const{
         //cout<<"RAfter: "<<R<<endl;
     }
     return R;
+}
+
+BigInt BigInt::pow(const BigInt &other) const{
+    BigInt bas, exp, result("1");
+    bas.data = data;
+    exp.data = other.data;
+    //exp.printBinary();
+    //cout<<endl;
+    //cout<< exp.bitLength() << endl;
+    for(size_t i=exp.bitLength(); i>0; i--){
+        result = result * result;
+        if(((exp.data[(i-1)/32]>>((i-1)%32)) & 1) == 1) result = result * bas;
+    }
+    return result;
 }
