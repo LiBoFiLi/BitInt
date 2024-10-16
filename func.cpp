@@ -220,6 +220,40 @@ bool BigInt::operator<=(const BigInt &other) const {
     return true; 
 }
 
+bool BigInt::operator==(const BigInt &other) const{
+    int a = data.size();
+    while (a > 0 && data[a - 1] == 0) {
+        a--;
+    }
+    int b = other.data.size();
+    while (b > 0 && other.data[b - 1] == 0) {
+        b--;
+    }
+    if (a < b) return false;   
+    if (a > b) return false; 
+    for (int i = a - 1; i >= 0; i--) {
+        if (data[i] < other.data[i]) return false;   
+        if (data[i] > other.data[i]) return false;  
+    }
+    return true; 
+}
+
+void BigInt::random(const int siz){
+    data.clear();
+    //string values = "0123456789abcdf";
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(0, BASE);
+    uniform_int_distribution<> distrib1(1, BASE);
+    uniform_int_distribution<> sizee(1, siz);
+    data.resize(sizee(gen));
+    int size = data.size();
+    for (int i = 0; i < size - 1; i++) {
+         data[i] = distrib(gen);
+    }
+    data[size - 1] = distrib1(gen);
+}
+
 void BigInt::printBinary() const{
     for(size_t i = data.size(); i>0; i--){
         bitset<32> binary(data[i-1]);

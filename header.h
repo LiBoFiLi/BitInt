@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iomanip>
 #include <bitset>
+#include <random>
 
 using namespace std;
 
@@ -43,9 +44,21 @@ class BigInt{
     bool operator>=(const BigInt &other) const;
     bool operator<(const BigInt &other) const;
     bool operator<=(const BigInt &other) const;
+    bool operator==(const BigInt &other) const;
     int size();
     friend ostream& operator<< (ostream &out, BigInt &num);
     void printBinary() const;
+    void random(const int siz);
+    BigInt& operator=(const BigInt& other) {
+        if (this == &other) return *this;
+        data = other.data;
+        return *this;
+    }
+    BigInt& operator=(const uint32_t other) {
+        data.clear();
+        data.push_back(other);
+        return *this;
+    }
     BigInt(uint32_t num) {
         data.push_back(num);
     }
