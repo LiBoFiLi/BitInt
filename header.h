@@ -49,6 +49,7 @@ class BigInt{
     friend ostream& operator<< (ostream &out, BigInt &num);
     void printBinary() const;
     void random(const int siz);
+    void random(const int siz1, const int siz2);
     BigInt& operator=(const BigInt& other) {
         if (this == &other) return *this;
         data = other.data;

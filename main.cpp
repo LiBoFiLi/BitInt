@@ -1,38 +1,29 @@
 #include "func.cpp"
 
 int main(){
-    BigInt aa("28a895cfd0200f098e2effaf19391c4a837ff199610c9bd4241b1a226effbc0ba1e4c9f81cd703a4212c02f96767adbc1e336b9d2cc5eccc98bd202bddc8fa5011f2df252fbb1843b3422db8f63129bad292c3b42a24");
-    BigInt ba("20736a58fe16964aa40fbafbcb63175b370f70823dd4212ff42bfbc778478b757e15cb8f9eb1bc33ae07f2366f07c6bade3f8cb1745bd0622073c835d9ed17b9897730a542ab333ec3f25e91a36787064d30eb8c5a396d5345f580b8104249d9d90cf6a85a2ce2e09a2ef2df9308cc0c9f57ff7727e6b0f56294dafff4c3b994");
-    BigInt a("28a895cfd0200f098e2effaf19391c4a837ff199610c9bd4241b1a226effbc0ba1e4c9f81cd703a4212c02f9677");
-    BigInt b("f098e2effaf19391c4a837ff199610c9bd4241b1a226effbc0ba1e4c9f81cd703a4212c02f96760");
-    cout<<"a:      "<<a<<" "<<a.size()<<endl;
-    cout<< endl;
-    cout<<"b:      "<<b<<" "<<b.size()<<endl;
-    cout<< endl;
+    BigInt b("1eb1ff6b3f043882d2a5e8b84d090d13d89e3c46fcde03f9a1275156fe22ea42336bcab5c9f52aeb46060a819989e83b1611c3aeb5088687dbcb06862b2283fa0be2b580ee96ad2f4013654163b642f373d3dd0f35cac93b0502383dff5ea213d303e3cc444fbab8f686a7738d57060563ca7da30d5af189e9447862b29b1902");
+    BigInt a("3a15c04294ad5b6b54fd4d577f922957b18f78766aea085849c8cdb38cecc7271fe85cac2d75e636a5fa9942ea7d549c8b498b7e7c4011e3627291d39e0741f821459d40b9d37c1ab8642e02145cec0e28799e153c91f5885d9c0c785687c2ab37ca13314d65e1d32f8448a3cb93686d2136019521203d65fbcd90874b7fb601ac413730abaf2a388ce5523b3971f28951ef557a01e6fcdc546d61be42acac72d3a8703b1ff7253d4f5dab44ca1aefda039441f96f20d073b7cb46a6093abfd8da3701525f05b57c7d2e3187642b39d65753018997d2242f184fec391f66fa7a9c8f7ea01295e8dda0a28003163c0e8dce4e34699ac46cb2bc348d412cf00e19");
+    BigInt aa("28a895cfd0200f098e2effaf19391c4a837ff199610c9bd4241b1a226effbc0ba1e4c9f81cd703a4212c02f9677");
+    BigInt ab("f098e2effaf19391c4a837ff199610c9bd4241b1a226effbc0ba1e4c9f81cd703a4212c02f96760");
+    cout<<"a:      "<<a<<" "<<a.size()<<"\n\n";
+    cout<<"b:      "<<b<<" "<<b.size()<<"\n\n";
     BigInt sum = a + b;
-    cout<<"sum:    "<< sum << endl;
-    cout<< endl;
+    cout<<"sum:    "<< sum << "\n\n";
     BigInt diff = a - b;
-    cout<<"diff:   "<< diff << endl;
-    cout<< endl;
+    cout<<"diff:   "<< diff << "\n\n";
     BigInt mulone = a.MulOneDigit("FFFF");
-    cout<<"mul on FFFF: "<< mulone << endl;
-    cout<< endl;
+    cout<<"mul on FFFF: "<< mulone << "\n\n";
     BigInt shift = a.LongShiftDigitsToHigh(1);
-    cout<<"shift1: "<< shift<<" "<<shift.size()<< endl;
-    cout<< endl;
+    cout<<"shift1: "<< shift<<" "<<shift.size()<< "\n\n";
     BigInt mul = a * b;
-    cout<<"mul:    "<< mul << endl;
-    cout<< endl;
+    cout<<"mul:    "<< mul << "\n\n";
     BigInt div = a / b;
-    cout<<"div:    "<< div << endl;
-    cout<< endl;
+    cout<<"div:    "<< div << "\n\n";
     BigInt R = a % b;
-    cout<<"R:      "<< R << endl;
-    cout<< endl;
+    cout<<"R:      "<< R << "\n\n";
     //BigInt exp = a.pow(b);
-    //cout<<"exp:    "<< exp << endl;
-    //cout<< endl;
+    //cout<<"exp:    "<< exp << "\n";
+    
 
     BigInt A,B,C,N1,N2,N3,N,SUM;
     A.random(32);

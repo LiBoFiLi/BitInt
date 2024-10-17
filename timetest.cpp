@@ -18,8 +18,8 @@ double measureTime(Func f, size_t iterations) {
 double testrand(size_t iterations , int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
-        b.random(size); 
+        a.random(size, size); 
+        b.random(size, size); 
     }, iterations);
 }
 
@@ -27,8 +27,8 @@ double testrand(size_t iterations , int size) {
 double testsum(size_t iterations , int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
-        b.random(size); 
+        a.random(size, size); 
+        b.random(size, size); 
         BigInt c = a + b; 
     }, iterations);
 }
@@ -37,8 +37,8 @@ double testsum(size_t iterations , int size) {
 double testdiff(size_t iterations, int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
-        b.random(size); 
+        a.random(size, size); 
+        b.random(size, size); 
         BigInt c = a - b; 
     }, iterations);
 }
@@ -46,8 +46,8 @@ double testdiff(size_t iterations, int size) {
 double testmul(size_t iterations, int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
-        b.random(size); 
+        a.random(size, size); 
+        b.random(size, size);
         BigInt c = a * b; 
     }, iterations);
 }
@@ -55,8 +55,8 @@ double testmul(size_t iterations, int size) {
 double testdiv(size_t iterations, int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
-        b.random(size); 
+        a.random(size, size); 
+        b.random(1, size-1);
         BigInt c = a / b; 
     }, iterations);
 }
@@ -64,7 +64,7 @@ double testdiv(size_t iterations, int size) {
 double testrand1(size_t iterations , int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
+        a.random(size,size); 
         b = 100;  
     }, iterations);
 }
@@ -72,7 +72,7 @@ double testrand1(size_t iterations , int size) {
 double testpow(size_t iterations, int size) {
     return measureTime([&]() {
         BigInt a, b;
-        a.random(size); 
+        a.random(size,size); 
         b = 100; 
         BigInt c = a.pow(b); 
     }, iterations);
@@ -80,22 +80,23 @@ double testpow(size_t iterations, int size) {
 
 
 int main() {
-    size_t iterations = 10000; 
+    size_t iterations = 10000;
+    int sizee = 32; 
 
-    double avgRandTime = testrand(iterations, 32);
-    double avgRandTime1 = testrand1(iterations, 32);
-    double avgAddTime = testsum(iterations, 32);
-    double avgSubTime = testdiff(iterations, 32);
-    double avgMulTime = testmul(iterations, 32);
-    double avgDivTime = testdiv(iterations, 32);
-    //double avgPowTime = testpow(iterations - 9900, 32);
+    double avgRandTime = testrand(iterations, sizee);
+    double avgRandTime1 = testrand1(iterations, sizee);
+    double avgAddTime = testsum(iterations, sizee);
+    double avgSubTime = testdiff(iterations, sizee);
+    double avgMulTime = testmul(iterations, sizee);
+    double avgDivTime = testdiv(iterations, sizee);
+    //double avgPowTime = testpow(iterations - 9900, sizee);
 
     cout << "Average time for random generation: " << avgRandTime * 1 << " seconds\n";
     cout << "Average time for addition: " << (avgAddTime - avgRandTime) * 1 << " seconds\n";
     cout << "Average time for subtraction: " << (avgSubTime - avgRandTime) * 1  << " seconds\n";
     cout << "Average time for multiplication: " << (avgMulTime - avgRandTime) * 1 << " seconds\n";
     cout << "Average time for division: " << (avgDivTime - avgRandTime) * 1 << " seconds\n";
-   // cout << "Average time for exp: " << (avgPowTime - avgRandTime1) * 1 << " seconds\n";
+    //cout << "Average time for exp: " << (avgPowTime - avgRandTime1) * 1 << " seconds\n";
 
     return 0;
 }

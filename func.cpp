@@ -254,6 +254,22 @@ void BigInt::random(const int siz){
     data[size - 1] = distrib1(gen);
 }
 
+void BigInt::random(const int siz1, const int siz2){
+    data.clear();
+    //string values = "0123456789abcdf";
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(0, BASE);
+    uniform_int_distribution<> distrib1(1, BASE);
+    uniform_int_distribution<> sizee(siz1, siz2);
+    data.resize(sizee(gen));
+    int size = data.size();
+    for (int i = 0; i < size - 1; i++) {
+         data[i] = distrib(gen);
+    }
+    data[size - 1] = distrib1(gen);
+}
+
 void BigInt::printBinary() const{
     for(size_t i = data.size(); i>0; i--){
         bitset<32> binary(data[i-1]);
