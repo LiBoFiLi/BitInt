@@ -17,9 +17,8 @@ class BigInt{
     vector<uint32_t> data;
     static const int base = 32;
     static const uint64_t BASE = (1ULL<<32) -1;
-    bool isZero() const {
-        return data.empty() || (data.size() == 1 && data[0] == 0);
-    }
+    BigInt Barrett(const BigInt &n, const BigInt &u);
+    
     void trim() {
     while (data.size() > 1 && data.back() == 0) {
         data.pop_back();  
@@ -36,10 +35,17 @@ class BigInt{
     BigInt MulOneDigit(uint32_t num);
     BigInt LongShiftDigitsToHigh(int i);
     BigInt LongShiftBitsToHigh(int value);
+    BigInt KillLastDigits(int value);
     BigInt operator*(const BigInt &other) const;
     BigInt operator/(const BigInt &other) const;
     BigInt operator%(const BigInt &other) const;
+    BigInt operator>>(const uint32_t other) const;
+    BigInt operator<<(const uint32_t other) const;
     BigInt pow(const BigInt &other) const;
+    BigInt addMod(const BigInt &b, const BigInt &mod) const;
+    BigInt subMod(const BigInt &b, const BigInt &mod) const;
+    BigInt mulMod(const BigInt &b, const BigInt &mod) const;
+    BigInt powMod(const BigInt &exp, const BigInt &mod) const;
     bool operator>(const BigInt &other) const;
     bool operator>=(const BigInt &other) const;
     bool operator<(const BigInt &other) const;
@@ -63,6 +69,9 @@ class BigInt{
     BigInt(uint32_t num) {
         data.push_back(num);
     }
+    bool isZero() const {
+        return data.empty() || (data.size() == 1 && data[0] == 0);
+    }
     size_t bitLength() const {
        size_t length = data.size() * 32;
        if (data.empty()) return 0;
@@ -74,5 +83,29 @@ class BigInt{
     }
        return length;
     }
+    
+    bool getbit(int val) const {
+       size_t length = data.size() * 32;
+       if (data.empty()) return 0;
+       length = length - 32;
+       uint32_t highest = data.back();
+       while (highest) {
+           highest = highest >> 1;
+           length++;
+    }
+       if(val>length){
+        return 0;
+       }
+       else{
+        return (data[val/32]>>(val%32)) & 1;
+       }
+    }
+
+    bool isEven() const {
+    return (data[0] & 1) == 0;
+    }
+    bool isOdd() const {
+    return (data[0] & 1) == 1; 
+} 
     
 };

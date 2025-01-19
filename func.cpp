@@ -300,6 +300,101 @@ BigInt BigInt::LongShiftBitsToHigh(int value){
     return result;
 }
 
+BigInt BigInt::operator>>(const uint32_t other) const {
+    if (other == 0) return *this;
+
+    BigInt result = *this;
+
+    int blockShift = other / 32; 
+    int bitShift = other % 32;  
+
+    if (blockShift > 0) {
+        if (blockShift >= (int)result.data.size()) {
+            result.data.clear();
+            result.data.push_back(0);
+            return result;
+        }
+        result.data.erase(result.data.begin(), result.data.begin() + blockShift);
+    }
+
+    if (bitShift > 0) {
+        uint32_t carry = 0; 
+        for (size_t i = result.data.size(); i > 0; i--) {
+            uint32_t current = result.data[i - 1];
+            result.data[i - 1] = (current >> bitShift) | (carry << (32 - bitShift));
+            carry = current & ((1U << bitShift) - 1); 
+        }
+    }
+
+     while (result.data.size() > 1 && result.data.back() == 0) {
+        result.data.pop_back();
+    }
+    return result;
+}
+
+BigInt BigInt::operator<<(const uint32_t other) const {
+    if (other <= 0) return *this; 
+
+    BigInt result;
+    result.data.resize(data.size() + (other / 32) + 1, 0); 
+    uint32_t carry = 0; 
+
+    for (size_t i = 0; i < data.size(); i++) {
+        uint32_t current = data[i]; 
+        result.data[i + (other / 32)] |= (current << (other % 32)); 
+
+        if (other % 32 > 0 && i + (other / 32) + 1 < result.data.size()) {
+            result.data[i + (other / 32) + 1] |= (current >> (32 - (other % 32))); 
+        }
+    }
+
+    while (result.data.size() > 1 && result.data.back() == 0) {
+        result.data.pop_back();
+    }
+
+    return result;
+}
+
+BigInt gcdBinary(const BigInt& a, const BigInt& b) {
+    if (a == 0) return b;
+    if (b == 0) return a;
+
+    BigInt aCopy = a;
+    BigInt bCopy = b;
+
+    BigInt d = 1;
+
+    while (aCopy.isEven() && bCopy.isEven()) {
+        aCopy = aCopy >> 1;
+        bCopy = bCopy >> 1;
+        d = d << 1;
+    }
+
+    while (aCopy.isEven()) {
+        aCopy = aCopy >> 1;
+    }
+    bool bzero = bCopy.isZero();
+    while (!bzero) {
+        while (bCopy.isEven()) {
+            bCopy = bCopy >> 1;
+        }
+
+        if (aCopy > bCopy) {
+            swap(aCopy, bCopy);
+        }
+        bCopy = bCopy - aCopy; 
+        bzero = bCopy.isZero();
+    }
+
+    return d*aCopy; 
+}
+
+BigInt lcm(const BigInt& a, const BigInt& b){
+    BigInt result;
+    result = (a*b) / gcdBinary(a,b);
+    return result;
+}
+
 BigInt BigInt::operator/(const BigInt &other) const{
     if(other.isZero()) throw invalid_argument("Division by zero");
     BigInt Q("0"); 
@@ -371,3 +466,103 @@ BigInt BigInt::pow(const BigInt &other) const{
     }
     return result;
 }
+
+/**
+BigInt BigInt::Barrett(const BigInt &other) const{
+    BigInt x, n = other;
+    x.data = data;
+    int k = n.size();
+    if(x.size()<=2*k){
+        x = x.LongShiftDigitsToHigh(2*k-x.size());
+    }
+    else{
+        n = n.LongShiftDigitsToHigh((x.size()-2*k)/2);
+    }
+    uint64_t B = (1ULL<<32);
+    uint32_t u = 
+    //BigInt q = x.KillLastDigits() 
+}
+*/
+
+BigInt BigInt::KillLastDigits(int value){
+    BigInt result;
+    result.data = data;
+    if (value < result.data.size()) {
+        result.data.erase(result.data.begin(), result.data.begin() + value);
+    } else {
+        result.data.clear();
+        result.data.push_back(0); 
+    }
+    return result;
+}
+
+
+BigInt BigInt::Barrett(const BigInt &n, const BigInt &u) {
+    size_t k = n.data.size(); 
+    BigInt x;
+    x.data = data;
+    if (n.data.size() < 2*x.data.size()) {
+        return x % n; 
+    }
+
+    BigInt q;
+    q = x.KillLastDigits(k-1) * u;
+    q = q * u;
+
+    q = q.KillLastDigits(k+1);
+
+    BigInt r = x - (q * n);
+
+    while (r >= n) {
+        r = r - n;
+    }
+
+    return r;
+}
+
+BigInt BigInt::addMod(const BigInt &b, const BigInt &mod) const{
+    BigInt a = *this;
+    BigInt result = a + b;
+    BigInt beta(1);
+    beta = beta << (2 * mod.data.size() * 32); 
+    BigInt mu = beta / mod;
+    return result.Barrett(mod, mu);
+}
+
+BigInt BigInt::subMod(const BigInt &b, const BigInt &mod) const{
+    BigInt a = *this;
+    BigInt result = a - b;
+    BigInt beta(1);
+    beta = beta << (2 * mod.data.size() * 32); 
+    BigInt mu = beta / mod;
+    return result.Barrett(mod, mu);
+}
+
+BigInt BigInt::mulMod(const BigInt &b, const BigInt &mod) const{
+    BigInt a = *this;
+    BigInt result = a * b;
+    BigInt beta(1);
+    beta = beta << (2 * mod.data.size() * 32); 
+    BigInt mu = beta / mod;
+    return result.Barrett(mod, mu);
+}
+
+BigInt BigInt::powMod(const BigInt &exp, const BigInt &mod) const{
+    BigInt result = BigInt(1); 
+    BigInt base = *this;
+    BigInt beta(1);
+    beta = beta << (2 * mod.data.size() * 32); 
+    BigInt mu = beta / mod;
+
+    BigInt x = base.Barrett(mod, mu); 
+
+    
+    for (int i = exp.bitLength() - 1; i >= 0; i--) {
+        result = result.mulMod(result, mod); 
+        if (exp.getbit(i)) {              
+            result = result.mulMod(x, mod);
+        }
+    }
+    return result;
+}
+
